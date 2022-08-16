@@ -131,11 +131,11 @@ To add Russian, you would first add Russian translation to the spreadsheet for e
     ```powerapps-dot
     //user language
     Set(gblUserLanguage,Switch(Left(Language(),2),"de","de-DE","en","en-US","es","es-ES","fr","fr-FR","it","it-IT","ja","ja-JP","nl","nl-NL",
-    "pt","pt-BR",“ru-RU”,
+    "pt","pt-BR","ru-RU",
     //default
     "en-US"));
     //build localization collection, with user's language
-    ClearCollect(colLocalization,Filter(staticLocalizations,LanguageTag = gblUserLanguage));Collect(colLocalization,Filter(staticLocalizationsNewMessages,LanguageTag = gblUserLanguage));
+    ClearCollect(colLocalization,Filter(staticLocalizations,LanguageTag = gblUserLanguage));
     ```
 
 1. Save and publish the app.
@@ -202,9 +202,27 @@ Let us add a label to the Loading screen:
 
 1. Open the **Text** property of the label and paste the following formula:
 
-   ```powerapps-dot
-   With({varDefault: "Welcome to the app";varOOBTextId: "lblLoadingText_Welcome_locText"};With({varLocalizedText: LookUp(colLocalization;OOBTextID = varOOBTextId;LocalizedText)};Coalesce(varLocalizedText;varDefault)))
-   ```
+```powerapps-dot
+With(
+    {
+        varDefault: "Welcome to the app",
+        varOOBTextId: "lblLoadingText_Welcome_locText"
+    },
+    With(
+        {
+            varLocalizedText: LookUp(
+                colLocalization,
+                OOBTextID = varOOBTextId,
+                LocalizedText
+            )
+        },
+        Coalesce(
+            varLocalizedText,
+            varDefault
+        )
+    )
+)
+```
 
 1. To test the localization of the label we created, change the language of our user in Teams to one of the languages that is in our localization Excel spreadsheet. You can change your Teams language by selecting your photo in the upper-right corner, and then selecting settings.
 
